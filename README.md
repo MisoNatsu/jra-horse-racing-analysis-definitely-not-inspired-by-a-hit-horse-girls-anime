@@ -34,14 +34,23 @@ Pengujian dilakukan terhadap 5 kandidat distribusi probabilitas. Model dievaluas
 
 ---
 
-## 🖼️ Pemodelan Log-Normal
+## 🖼️ Visualisasi & Pemodelan Data
 
-### 1. Probability Density Function (PDF)
-PDF menunjukkan tingkat kepadatan probabilitas pada nilai *win_odds* tertentu. Kurva Log-Normal teoretis (garis merah) secara presisi menangkap lonjakan probabilitas di area odds kecil (kuda unggulan) sekaligus melandai mengikuti ekor data (*long-tail*) untuk kuda *underdog*.
+### 1. Visualisasi Awal: Komparasi Distribusi
+Grafik di bawah ini membandingkan data aktual (histogram) dengan kecocokan kurva **Log-Normal** (merah) dan **Normal** (hijau). Terlihat jelas bahwa distribusi Normal memaksakan simetrisitas dan gagal menangkap ekor data, sementara Log-Normal sangat presisi mengikuti pola *right-skewed*.
+![Distribusi Win Odds JRA 2024](jra_win_odds_dist.png)
+
+### 2. Pemodelan Log-Normal (Best Fit)
+Karena Log-Normal terpilih sebagai *best fit*, berikut adalah pemodelan fungsi probabilitas spesifiknya dengan parameter turunan $\mu = 3,3420$ dan $\sigma = 1,5204$.
+
+#### Probability Density Function (PDF)
+Fungsi kepadatan probabilitas (PDF) ini menunjukkan seberapa sering nilai odds tertentu muncul. 
+$$f(x) = \frac{1}{x\sigma\sqrt{2\pi}} \exp\left(-\frac{(\ln x - \mu)^2}{2\sigma^2}\right)$$
 ![Probability Density Function (PDF)](jra_pdf_model.png)
 
-### 2. Cumulative Distribution Function (CDF)
-CDF menunjukkan probabilitas kumulatif bahwa suatu variabel acak *win_odds* akan bernilai kurang dari atau sama dengan nilai tertentu. Model ini sangat berguna untuk membaca probabilitas *threshold* secara praktis (misalnya: garis mencapai probabilitas ~80% pada odds 120).
+#### Cumulative Distribution Function (CDF)
+Fungsi distribusi kumulatif (CDF) ini menunjukkan probabilitas bahwa nilai *win_odds* akan kurang dari atau sama dengan suatu *threshold*. Sangat berguna untuk analisis persentil (misal: probabilitas $80\%$ populasi berada di bawah odds $120$).
+$$F(x) = \Phi\left(\frac{\ln x - \mu}{\sigma}\right)$$
 ![Cumulative Distribution Function (CDF)](jra_cdf_model.png)
 
 ---
@@ -50,7 +59,7 @@ CDF menunjukkan probabilitas kumulatif bahwa suatu variabel acak *win_odds* akan
 
 1. **Provenans Data (Data Provenance):** Data berasal dari agregasi pihak ketiga (Kaggle), bukan API resmi JRA. Validitas bergantung pada kurasi *uploader*.
 2. **Karakteristik Uji Kolmogorov-Smirnov (KS-Test):** Meskipun Log-Normal unggul secara relatif (AIC), uji KS memberikan p-value $< 0,05$ (menolak $H_0$ absolut). Hal ini dikarenakan pada ukuran sampel besar ($n > 12.000$), uji KS memiliki *power* yang sangat tinggi sehingga deviasi kecil dari distribusi teoritis akan terdeteksi signifikan. Oleh karena itu, kriteria AIC lebih tepat digunakan untuk perbandingan relatif antar-model.
-3. **Penanganan Outlier & Pembatasan Visual:** Sumbu-X pada histogram PDF dan CDF dibatasi hingga batas `300` agar visualisasi kurva utama tetap terfokus. Terdapat sekitar **7,2% data ($> 300$)** yang berada pada ekor panjang (*long-tail*) dan terpotong secara visual, namun seluruh data penuh tetap disertakan dalam perhitungan kriteria AIC dan parameter model.
+3. **Penanganan Outlier & Pembatasan Visual:** Sumbu-X pada grafik dibatasi hingga batas `300` agar visualisasi kurva utama tetap terfokus. Terdapat sekitar **7,2% data ($> 300$)** yang berada pada ekor panjang (*long-tail*) dan terpotong secara visual, namun seluruh data penuh tetap disertakan dalam perhitungan kriteria AIC dan parameter model.
 
 ---
 
